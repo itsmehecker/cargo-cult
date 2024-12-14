@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-This project is a work in progress and the name is still being finalized. The goal of this project is to provide a way for users to find their previously used commands fast and easily
+The goal of this project is to provide a way for users to find their previously used commands fast and easily
 
-PS I added clip and pbcopy alr in the code so i fyou wanna re use it for maybe .bash_history/equivalent for windows you can just changing the file name would be enough
+PS I added clip and pbcopy alr in the code so if you wanna re use it for maybe .bash_history/equivalent for windows you can just changing the file name would be enough
 ## Features
 
 - detects the .zshfile
