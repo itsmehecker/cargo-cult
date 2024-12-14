@@ -1,8 +1,7 @@
-//just a working copy with pbcopy instead of clip
-use std::env;
+use clap::{Arg, Command};
 use std::fs::File;
-use std::io::{self, BufRead};
-use std::process::Command;
+use std::io::{self, BufRead, Write};
+use std::process::Command as ProcessCommand;
 
 fn func(u: &str, lines: &[String]) -> Vec<String> {
     lines
@@ -12,13 +11,42 @@ fn func(u: &str, lines: &[String]) -> Vec<String> {
         .collect()
 }
 
-fn main() -> io::Result<()> {
-    let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("Usage: cargo run <snippet>");
-        std::process::exit(1);
+fn copy_to_clipboard(command: &str) -> io::Result<()> {
+    let mut child = if cfg!(target_os = "windows") {
+        ProcessCommand::new("clip")
+    } else if cfg!(target_os = "macos") {
+        ProcessCommand::new("pbcopy")
+    } else {
+        let mut cmd = ProcessCommand::new("xclip");
+        cmd.arg("-selection").arg("clipboard");
+        cmd
     }
-    let snippet = &args[1];
+    .stdin(std::process::Stdio::piped())
+    .spawn()?;
+
+    child
+        .stdin
+        .as_mut()
+        .unwrap()
+        .write_all(command.as_bytes())?;
+    child.wait()?;
+    Ok(())
+}
+
+fn main() -> io::Result<()> {
+    let matches = Command::new("zfind")
+        .version("1.0")
+        .author("Your Name <your.email@example.com>")
+        .about("Finds and copies commands from .zsh_history")
+        .arg(
+            Arg::new("snippet")
+                .help("The snippet to search for in the command history")
+                .required(true)
+                .index(1),
+        )
+        .get_matches();
+
+    let snippet = matches.get_one::<String>("snippet").unwrap();
 
     let file = File::open(".zsh_history")?;
     let lines: Vec<String> = io::BufReader::new(file)
@@ -27,39 +55,30 @@ fn main() -> io::Result<()> {
         .collect();
 
     let results = func(snippet, &lines);
-    if !results.is_empty(){
-        if results.len() == 1 {
-            let command = &results[0];
+    if results.is_empty() {
+        println!("No matching command found.");
+    } else if results.len() == 1 {
+        let command = &results[0];
+        println!("{}", command);
+        copy_to_clipboard(command)?;
+        println!("Command copied to clipboard. Paste it into the terminal to execute.");
+    } else {
+        println!("Multiple matches found:");
+        for (i, result) in results.iter().enumerate() {
+            println!("{}: {}", i + 1, result.trim());
+        }
+        let mut input = String::new();
+        io::stdin().read_line(&mut input)?;
+        let choice: usize = input.trim().parse().unwrap_or(0);
+        if choice > 0 && choice <= results.len() {
+            let command = &results[choice - 1];
             println!("{}", command);
-            Command::new("pbcopy")
-                .arg(command)
-                .output()
-                .expect("Failed to copy to clipboard");
+            copy_to_clipboard(command)?;
             println!("Command copied to clipboard. Paste it into the terminal to execute.");
         } else {
-            println!("Multiple matches found:");
-            for (i, result) in results.iter().enumerate() {
-                println!("{}: {}", i + 1, result.trim());
-            }
-            let mut choice = String::new();
-            io::stdin()
-                .read_line(&mut choice)
-                .expect("Failed to read line");
-            let choice: usize = choice.trim().parse::<usize>().expect("Invalid input") - 1;
-            if (choice < results.len()) {
-                let command = &results[choice];
-                println!("{}", command);
-                Command::new("pbcopy")
-                    .arg(command)
-                    .output()
-                    .expect("Failed to copy to clipboard");
-                println!("Command copied to clipboard. Paste it into the terminal to execute.");
-            } else {
-                println!("Invalid choice.");
-            }
+            println!("Invalid choice.");
         }
-    } else {
-        println!("No matching command found.");
     }
+
     Ok(())
 }
