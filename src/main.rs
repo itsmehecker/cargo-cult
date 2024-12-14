@@ -2,11 +2,12 @@ use clap::{Arg, Command};
 use std::fs::File;
 use std::io::{self, BufRead, Write};
 use std::process::Command as ProcessCommand;
+use dirs_next::home_dir;
 
-fn func(u: &str, lines: &[String]) -> Vec<String> {
+fn func(snippet: &str, lines: &[String]) -> Vec<String> {
     lines
         .iter()
-        .filter(|line| line.contains(u))
+        .filter(|line| line.contains(snippet))
         .cloned()
         .collect()
 }
@@ -34,9 +35,8 @@ fn copy_to_clipboard(command: &str) -> io::Result<()> {
 }
 
 fn main() -> io::Result<()> {
-    let matches = Command::new("zfind")
-        .version("1.0")
-        .author("Your Name <your.email@example.com>")
+    let matches = Command::new("zsh_history_search")
+        .author("itsmehecker")
         .about("Finds and copies commands from .zsh_history")
         .arg(
             Arg::new("snippet")
@@ -48,7 +48,10 @@ fn main() -> io::Result<()> {
 
     let snippet = matches.get_one::<String>("snippet").unwrap();
 
-    let file = File::open(".zsh_history")?;
+    let home = home_dir().expect("Could not find home directory");
+    let history_path = home.join(".zsh_history");
+    let file = File::open(history_path)?;
+
     let lines: Vec<String> = io::BufReader::new(file)
         .lines()
         .filter_map(Result::ok)

@@ -11,6 +11,7 @@ PS I added clip and pbcopy alr in the code so i fyou wanna re use it for maybe .
 - displays multiple options
 - automatically copies it to your clipboard for access
 - fast as its made in rust
+- uses dirs-next
 
 ## Build
 

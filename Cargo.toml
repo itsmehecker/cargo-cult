@@ -10,6 +10,7 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 clap = "4.0"
+dirs-next = "2.0"
 
 [[bin]]
 name = "zfind"
