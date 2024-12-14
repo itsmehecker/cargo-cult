@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2018"
 description = "A tool for zsh which provides easy access to your previous commands"
 repository = "https://github.com/itsmehecker/cargo-cult"
-readme = "README.md"
+readme = "Readme.md"
 homepage = "https://itsmehecker.github.io/zcopy/"
 
 [dependencies]
