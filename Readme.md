@@ -12,7 +12,7 @@ PS I added clip and pbcopy alr in the code so if you wanna re use it for maybe .
 - automatically copies it to your clipboard for access
 - fast as its made in rust
 - uses dirs-next
-
+- finds the bash_history file and creates a .history_config for with your prefered choice
 ## Build
 
 To install the project, clone the repository and navigate to the project directory:

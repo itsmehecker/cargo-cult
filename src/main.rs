@@ -1,9 +1,10 @@
 use clap::{Arg, Command};
-use std::fs::File;
-use std::io::{self, BufRead, Write};
+use std::fs::{File, OpenOptions};
+use std::io::{self, BufRead, Read, Write};
 use std::process::Command as ProcessCommand;
 use dirs_next::home_dir;
 use std::io::stdin;
+use std::path::PathBuf;
 
 fn func(snippet: &str, lines: &[String]) -> Vec<String> {
     lines
@@ -27,6 +28,45 @@ fn copy_to_clipboard(command: &str) -> io::Result<()> {
     Ok(())
 }
 
+fn get_history_path() -> io::Result<PathBuf> {
+    let home = home_dir().expect("Could not find home directory");
+    let config_path = home.join(".history_config");
+
+    if config_path.exists() {
+        let mut file = File::open(&config_path)?;
+        let mut choice = String::new();
+        file.read_to_string(&mut choice)?;
+        let choice = choice.trim();
+        if choice == "bash" {
+            return Ok(home.join(".bash_history"));
+        } else {
+            return Ok(home.join(".zsh_history"));
+        }
+    } else {
+        let historybash = home.join(".bash_history");
+        if historybash.exists() {
+            println!("Found .bash_history file. Do you want to use bash history instead of zsh history? (y/n)");
+            let mut input = String::new();
+            stdin().read_line(&mut input)?;
+            let input = input.trim();
+            let mut file = OpenOptions::new().write(true).create(true).open(&config_path)?;
+            if input.eq_ignore_ascii_case("y") {
+                writeln!(file, "bash")?;
+                return Ok(home.join(".bash_history"));
+            } else if input.eq_ignore_ascii_case("n") {
+                writeln!(file, "zsh")?;
+                return Ok(home.join(".zsh_history"));
+            } else {
+                println!("Invalid input. Using zsh history.");
+                writeln!(file, "zsh")?;
+                return Ok(home.join(".zsh_history"));
+            }
+        } else {
+            return Ok(home.join(".zsh_history"));
+        }
+    }
+}
+
 fn main() -> io::Result<()> {
     let matches = Command::new("zsh_history_search")
         .author("itsmehecker")
@@ -46,8 +86,7 @@ fn main() -> io::Result<()> {
         .collect::<Vec<&str>>()
         .join(" ");
 
-    let home = home_dir().expect("Could not find home directory");
-    let history_path = home.join(".zsh_history");
+    let history_path = get_history_path()?;
     let file = File::open(history_path)?;
 
     let lines: Vec<String> = io::BufReader::new(file)

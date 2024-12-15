@@ -1,8 +1,8 @@
 [package]
 name = "zfind"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2018"
-description = "A tool for zsh which provides easy access to your previous commands"
+description = "A tool for zsh which provides easy access to your previous commands (macOS and Linux)"
 repository = "https://github.com/itsmehecker/cargo-cult"
 readme = "Readme.md"
 homepage = "https://itsmehecker.github.io/zcopy/"
