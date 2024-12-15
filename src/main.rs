@@ -1,4 +1,5 @@
 use clap::{Arg, Command};
+use std::collections::HashSet;
 use std::fs::{File, OpenOptions};
 use std::io::{self, BufRead, Read, Write};
 use std::process::Command as ProcessCommand;
@@ -6,13 +7,6 @@ use dirs_next::home_dir;
 use std::io::stdin;
 use std::path::PathBuf;
 
-fn func(snippet: &str, lines: &[String]) -> Vec<String> {
-    lines
-        .iter()
-        .filter(|line| line.contains(snippet))
-        .cloned()
-        .collect()
-}
 
 fn copy_to_clipboard(command: &str) -> io::Result<()> {
     let mut child = if cfg!(target_os = "windows") {
@@ -94,7 +88,16 @@ fn main() -> io::Result<()> {
         .filter_map(Result::ok)
         .collect();
 
-    let results = func(&snippet, &lines);
+    let mut unique_lines = HashSet::new();
+    let unique_lines: Vec<String> = lines.into_iter()
+        .filter(|line| unique_lines.insert(line.clone()))
+        .collect();
+
+    let results: Vec<String> = unique_lines.iter()
+        .filter(|line| line.contains(&snippet))
+        .cloned()
+        .collect();
+
     if results.is_empty() {
         println!("No matching command found.");
     } else {

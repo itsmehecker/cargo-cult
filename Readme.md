@@ -16,6 +16,7 @@ PS I added clip and pbcopy alr in the code so if you wanna re use it for maybe .
 - do keep in mind you can use any terminal with this as long as the commands don't have a timestamp (EXTENDED_HISTORY) on your .rc file like it has on zsh (turned off by default)
 - if you would like to switch editors you could try editing the .history_config with nano/vim and change it
 - bash for using bash and zsh for using zsh.
+- removed duplicates
 
 ## To do's
 - adding support for other terminals (prob not coz I don't wanna add extra lines of code for just nothing)
