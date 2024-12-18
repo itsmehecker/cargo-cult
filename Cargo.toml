@@ -5,7 +5,7 @@ edition = "2018"
 description = "A tool for zsh which provides easy access to your previous commands"
 repository = "https://github.com/itsmehecker/cargo-cult"
 readme = "Readme.md"
-homepage = "https://itsmehecker.github.io/zcopy/"
+homepage = "https://itsmehecker.github.io/zfind/"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
