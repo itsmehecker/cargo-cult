@@ -15,7 +15,8 @@ so you can use doskey which is a little too much for people to have it setup so 
 yeah thats right no other support for cmd.exe(im kidding you can still just change the .zsh_history to your persistant history file if you set it up with doskey)
 
 as for powershell-
- ```%appdata%\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+ ```
+%appdata%\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
  ```
 would be the path where the history is saved in
 
