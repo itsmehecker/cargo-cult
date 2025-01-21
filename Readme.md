@@ -5,6 +5,20 @@
 The goal of this project is to provide a way for users to find their previously used commands fast and easily
 
 PS I added clip and pbcopy alr in the code so if you wanna re use it for maybe .bash_history/equivalent for windows you can just changing the file name would be enough
+
+## Usage for linux/macOS
+it just requires you to have zsh or bash installed with the history file present 
+
+## Usage for Windows
+windows' cmd doesn't have native support for terminal history 
+so you can use doskey which is a little too much for people to have it setup so I went with setting it up for powershell 
+yeah thats right no other support for cmd.exe(im kidding you can still just change the .zsh_history to your persistant history file if you set it up with doskey)
+
+as for powershell-
+ ```%appdata%\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+ ```
+would be the path where the history is saved in
+
 ## Features
 
 - detects the .zshfile

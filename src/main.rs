@@ -24,7 +24,11 @@ fn copy_to_clipboard(command: &str) -> io::Result<()> {
 
 fn get_history_path() -> io::Result<PathBuf> {
     let home = home_dir().expect("Could not find home directory");
-    let config_path = home.join(".history_config");
+    let config_path = if cfg!(target_os = "windows") {
+        PathBuf::from(r"%appdata%\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt")
+    } else {
+        home.join(".history_config")
+    };
 
     if config_path.exists() {
         let mut file = File::open(&config_path)?;
